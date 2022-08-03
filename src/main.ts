@@ -1,9 +1,11 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import './index.css'
+import { createApp } from "vue";
+import { createPinia } from "pinia";
+import App from "./App.vue";
+import "./index.css";
 
-createApp(App)
-  .mount('#app')
-  .$nextTick(() => {
-    postMessage({ payload: 'removeLoading' }, '*')
-  })
+const pinia = createPinia();
+const app = createApp(App);
+app.use(pinia);
+app.mount("#app").$nextTick(() => {
+  postMessage({ payload: "removeLoading" }, "*");
+});

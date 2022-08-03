@@ -38,6 +38,7 @@
     "vue"
   ],
   "dependencies": {
-    "daisyui": "^2.20.0"
+    "daisyui": "^2.20.0",
+    "pinia": "^2.0.17"
   }
 }
