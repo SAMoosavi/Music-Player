@@ -38,6 +38,7 @@
     "vue"
   ],
   "dependencies": {
+    "animejs": "^3.2.1",
     "daisyui": "^2.20.0",
     "pinia": "^2.0.17"
   }
