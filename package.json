@@ -16,7 +16,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.3",
     "autoprefixer": "^10.4.8",
-    "electron": "^6.1.12",
+    "electron": "^20.0.0",
     "electron-builder": "^5.5.0",
     "postcss": "^8.4.14",
     "tailwindcss": "^3.1.7",
