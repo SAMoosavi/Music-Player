@@ -14,6 +14,7 @@
     "node": ">=14.17.0"
   },
   "devDependencies": {
+    "@types/animejs": "^3.1.5",
     "@vitejs/plugin-vue": "^2.3.3",
     "autoprefixer": "^10.4.8",
     "electron": "^20.0.0",

@@ -1,4 +1,4 @@
-import anime from "animejs/lib/anime.es.js";
+import anime, { AnimeInstance } from "animejs";
 
 export function svgCreat(el: any): void {
   anime({
