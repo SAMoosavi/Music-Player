@@ -1,5 +1,5 @@
 import { rmSync } from 'fs'
-import { join } from 'path'
+import { join, resolve } from 'path'
 import { defineConfig, Plugin, UserConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import electron from 'vite-plugin-electron'
@@ -13,23 +13,23 @@ export default defineConfig({
     vue(),
     electron({
       main: {
-        entry: 'electron/main/index.ts',
+        entry: "electron/main/index.ts",
         vite: withDebug({
           build: {
-            outDir: 'dist/electron/main',
+            outDir: "dist/electron/main",
           },
         }),
       },
       preload: {
         input: {
           // You can configure multiple preload here
-          index: join(__dirname, 'electron/preload/index.ts'),
+          index: join(__dirname, "electron/preload/index.ts"),
         },
         vite: {
           build: {
             // For Debug
-            sourcemap: 'inline',
-            outDir: 'dist/electron/preload',
+            sourcemap: "inline",
+            outDir: "dist/electron/preload",
           },
         },
       },
@@ -37,11 +37,16 @@ export default defineConfig({
       renderer: {},
     }),
   ],
+  resolve: {
+    alias: {
+      "@": resolve(__dirname, "src"),
+    },
+  },
   server: {
     host: pkg.env.VITE_DEV_SERVER_HOST,
     port: pkg.env.VITE_DEV_SERVER_PORT,
   },
-})
+});
 
 function withDebug(config: UserConfig): UserConfig {
   if (process.env.VSCODE_DEBUG) {
