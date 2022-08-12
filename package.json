@@ -39,6 +39,7 @@
     "vue"
   ],
   "dependencies": {
+    "@electron/remote": "^2.0.8",
     "animejs": "^3.2.1",
     "daisyui": "^2.20.0",
     "pinia": "^2.0.17"

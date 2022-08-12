@@ -1,4 +1,6 @@
 import { app, BrowserWindow, shell, ipcMain } from "electron";
+import { initialize, enable } from "@electron/remote/main";
+initialize();
 import { release } from "os";
 import { join } from "path";
 
@@ -64,6 +66,8 @@ async function createWindow() {
     if (url.startsWith("https:")) shell.openExternal(url);
     return { action: "deny" };
   });
+
+  enable(win.webContents);
 }
 
 app.whenReady().then(createWindow);
