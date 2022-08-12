@@ -1,66 +1,69 @@
 <template>
-  <div>
-    <input
-      ref="inputFile"
-      type="file"
-      class="hidden"
-      @change="changeFile"
-      multiple
-      webkitdirectory
-    />
-    <button class="btn" @click="openFils">add Folder</button>
-  </div>
+  <button class="btn " @click="openFiles">add Folder</button>
+
 </template>
 
 <script setup lang="ts">
-//? Pinia
-import { useMusic } from "@/store/Musics";
-//? vue function
-import { ref } from "vue";
+// electron
+import {dialog} from "@electron/remote";
+// node js
+import {readdirSync} from "fs";
+import {join} from "path";
+// pinia
+import {useMusic} from "../store/Musics";
+import {storeToRefs} from "pinia";
 
-const Musics = useMusic();
+const Music = useMusic()
+const {allMusic, directories} = storeToRefs(Music)
 
-const inputFile = ref();
+let musics: string[] = [];
+let directory: string[] = []
 
-function openFils() {
-  inputFile.value.click();
-}
-
-function checkType(type: string | undefined): boolean {
+function checkType(name: string): boolean {
+  let type = name.split('.').pop()
+  if (!type)
+    return false
+  type = type.toLowerCase()
   return type == "mp3" || type == "ogg" || type == "wav";
 }
 
-function changeFile(event: any) {
-  const basePath = event.target.files[0].path.substr(
-    0,
-    event.target.files[0].path.indexOf(
-      `/${event.target.files[0].webkitRelativePath}`
-    )
-  );
-
-  const allMusic = Musics.getAllMusic;
-  let music = Musics.getMusicsWithDir;
-
-  for (const file of event.target.files) {
-    const pathOfFile: string = file.webkitRelativePath;
-    if (!allMusic[pathOfFile]) {
-      const splitPathOfFile = pathOfFile.split("/");
-      const type = splitPathOfFile[splitPathOfFile.length - 1].split(".").pop();
-      if (checkType(type)) {
-        const direct = splitPathOfFile[2]
-          ? `${basePath}/${splitPathOfFile[0]}/${splitPathOfFile[1]}`
-          : `${basePath}/${splitPathOfFile[0]}`;
-        const fullPathOfFile = file.path;
-        if (direct in music) {
-          music[direct] = [fullPathOfFile, ...music[direct]];
-        } else {
-          music[direct] = [fullPathOfFile];
-        }
+function nextDir(path: string): void {
+  for (let file of readDir(path)) {
+    const filePath = join(path, file.name)
+    if (file.isFile()) {
+      if (!allMusic.value[filePath] && checkType(filePath)) musics.push(filePath)
+    } else if (file.isDirectory()) {
+      if (!directories.value.find((direct) => direct == filePath)) {
+        directory.push(filePath)
+        nextDir(filePath)
       }
     }
   }
-
-  Musics.setMusicWithDir(music);
-  console.log(Musics.getMusicsWithDir);
 }
+
+function openFiles() {
+  dialog.showOpenDialog({
+    title: "Select Folder Music",
+    properties: ['openDirectory']
+  }).then((result: any) => {
+        if (!result.canceled) {
+          nextDir(result.filePaths[0])
+        } else alert("canceled")
+        Music.setMusic(musics)
+        Music.setDirectory(directory)
+        console.log(directories, directory)
+      }
+  ).catch((error: any) => {
+    console.error(error)
+  }).finally(() => {
+    directory = []
+    musics = []
+  })
+}
+
+function readDir(dir: string) {
+  return readdirSync(dir, {withFileTypes: true})
+}
+
 </script>
+

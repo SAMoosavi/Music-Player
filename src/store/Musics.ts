@@ -1,35 +1,36 @@
-import { defineStore } from "pinia";
+import {defineStore} from "pinia";
 
 export const useMusic = defineStore("music", {
-  state: () => ({
-    musicsWithDir: {},
-    allMusic: {},
-  }),
-  getters: {
-    getMusicsWithDir: (state) => state.musicsWithDir,
-    getAllMusic: (state) => state.allMusic,
-  },
-  actions: {
-    setMusicWithDir(val: object) {
-      this.musicsWithDir = val;
-      localStorage.setItem("musicsWithDir", JSON.stringify(val));
-      let allMusic = this.allMusic;
-      for (const key in val) {
-        if (Object.prototype.hasOwnProperty.call(val, key)) {
-          const element = val[key];
-          for (const iterator of element) {
-            if (!allMusic[iterator]) {
-              allMusic[iterator] = {
-                path: iterator,
-                name: iterator.split("/")[-1],
-                star: 0,
-                status: 0,
-              };
-            }
-          }
-        }
-      }
-      this.allMusic = allMusic;
+    state: () => ({
+        musicsWithDir: <any>{},
+        allMusic: <any>{},
+        playLists: <any>{},
+        directories: <string[]>[],
+    }),
+    getters: {
+        getMusicsWithDir: (state) => state.musicsWithDir,
+        getAllMusic: (state) => state.allMusic,
+        getPlayLists: (state) => (playList: string) => state.playLists[playList],
+        getDirectories: (state) => state.directories,
     },
-  },
+    actions: {
+        setMusic(pathMusics: string[]) {
+            for (const pathMusic of pathMusics) {
+                this.allMusic[pathMusic] = {
+                    path: pathMusic,
+                    name: pathMusic.split("/").pop(),
+                    star: 0,
+                    status: 0,
+                }
+            }
+            localStorage.setItem("musics", JSON.stringify(this.allMusic))
+        },
+        setDirectory(pathDirectories: string[]) {
+            this.directories = [...this.directories, ...pathDirectories]
+            localStorage.setItem("directories", JSON.stringify(this.directories))
+        },
+        setPlayList(name: string, list: string[]) {
+            this.playLists[name] = list;
+        },
+    },
 });
