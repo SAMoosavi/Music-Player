@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@types/animejs": "^3.1.5",
+    "@types/jsmediatags": "^3.9.3",
     "@vitejs/plugin-vue": "^2.3.3",
     "autoprefixer": "^10.4.8",
     "electron": "^20.0.0",
@@ -42,6 +43,7 @@
     "@electron/remote": "^2.0.8",
     "animejs": "^3.2.1",
     "daisyui": "^2.20.0",
+    "jsmediatags": "^3.9.7",
     "pinia": "^2.0.17"
   }
 }
