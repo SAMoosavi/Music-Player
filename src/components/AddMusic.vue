@@ -51,7 +51,6 @@ function openFiles() {
         } else alert("canceled")
         Music.setMusic(musics)
         Music.setDirectory(directory)
-        console.log(directories, directory)
       }
   ).catch((error: any) => {
     console.error(error)
