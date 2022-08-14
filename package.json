@@ -15,7 +15,6 @@
   },
   "devDependencies": {
     "@types/animejs": "^3.1.5",
-    "@types/jsmediatags": "^3.9.3",
     "@vitejs/plugin-vue": "^2.3.3",
     "autoprefixer": "^10.4.8",
     "electron": "^20.0.0",
