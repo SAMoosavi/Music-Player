@@ -55,6 +55,12 @@
           </div>
         </div>
       </div>
+      <br>
+      <div class="rating">
+        <input value="0" type="radio" v-model="rating" class="hidden">
+        <input v-for="i in 5" :key="i" type="radio" :value="i" v-model="rating"
+               class="mask mask-star-2 bg-orange-400"/>
+      </div>
     </div>
   </div>
 </template>
@@ -69,6 +75,7 @@ import {Music} from "../types/types";
 const props = defineProps<{ music: Music }>()
 const emit = defineEmits(['notFound', "finish"])
 
+const rating: Ref<number> = ref(0)
 const likeTimes: Ref<number[]> = ref([])
 const start: Ref<boolean> = ref(false)
 const startTime: Ref<number> = ref(0)
