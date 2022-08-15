@@ -17,6 +17,9 @@
             :value="time"
             @input="setTime"
             class="range range-xs  radio-primary">
+        <div v-for="likeTime in likeTimes" :key="likeTime" class="absolute bg-yellow-500 w-1 h-5 top-3 z-50"
+             :style="`left: ${likeTime/duration*100}%`"
+             @click="deleteLikeTime(likeTime)"></div>
       </div>
       <br>
       <div class="flex justify-between">
@@ -39,7 +42,16 @@
         <button @click="setEnd" class="btn btn-primary basis-1/3 ">setEnd</button>
         <button @click="deleteTime" class="btn btn-secondary basis-1/3 ">deleteTime</button>
       </div>
-
+      <br>
+      <div class="btn-group">
+        <button @click="addLikeTime" class="btn btn-secondary basis-full ">add like time</button>
+        <div class="flex flex-wrap gap-0 rounded-md">
+          <div v-for="likeTime in likeTimes" :key="likeTime" class="btn btn-sm rounded-none"
+               @click="goToLikeTime(likeTime)">
+            {{ secondToTime(likeTime / audio.playbackRate) }}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -54,6 +66,7 @@ import {Music} from "../types/types";
 const props = defineProps<{ music: Music }>()
 const emit = defineEmits(['notFound', "finish"])
 
+const likeTimes: Ref<number[]> = ref([])
 const start: Ref<boolean> = ref(false)
 const startTime: Ref<number> = ref(0)
 const end: Ref<boolean> = ref(false)
@@ -90,6 +103,25 @@ if (props.music) {
     else
       duration.value = audio.value.duration
 } else emit('notFound')
+
+function goToLikeTime(likeTime: number) {
+  likeTime -= 3
+  if (likeTime < 0)
+    likeTime = 0
+  audio.value.currentTime = likeTime
+  time.value = likeTime
+}
+
+function deleteLikeTime(time: number) {
+  likeTimes.value.splice(likeTimes.value.indexOf(time), 1)
+}
+
+function addLikeTime() {
+  if (likeTimes.value.indexOf(audio.value.currentTime) == -1) {
+    likeTimes.value.push(audio.value.currentTime)
+    likeTimes.value.sort((a, b) => a - b)
+  }
+}
 
 function deleteTime() {
   start.value = false
