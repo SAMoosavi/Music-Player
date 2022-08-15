@@ -14,8 +14,13 @@
           @input="setTime"
           class="range range-xs radio-primary">
 
-      <div class="flex justify-between"><span>{{ secondToTime(time) }}</span><span>{{ secondToTime(duration) }}</span>
+      <div class="flex justify-between">
+        <span>{{ secondToTime(time / audio.playbackRate) }}</span>
+        <span>{{ secondToTime(duration / audio.playbackRate) }}</span>
+      </div>
+      <div class="flex ">
         <input type="range" min="0" max="100" :value="audio.volume*100" @input="setVolume">
+        <input type="range" min="0.5" max="10" :value="audio.playbackRate" @input="setPlaybackRate" step="0.5">
       </div>
 
       <div class="btn-group ">
@@ -69,15 +74,17 @@ if (props.music) {
       duration.value = audio.value.duration
 } else emit('notFound')
 
+function setPlaybackRate(ev: any) {
+  audio.value.playbackRate = ev.target.value
+}
+
 function setVolume(ev: any) {
   audio.value.volume = ev.target.value / 100
 }
 
 function setTime(ev: any) {
-  if (audio.value) {
-    audio.value.currentTime = ev.target.value
-    time.value = ev.target.value
-  }
+  audio.value.currentTime = ev.target.value
+  time.value = ev.target.value
 }
 
 onUnmounted(() => {
