@@ -2,7 +2,10 @@
   <div class="flex justify-center">
 
     <div class="w-96">
-      {{ name }}
+      <div>
+        {{ name }}
+      </div>
+      <br>
       <img width="100" height="100" :src="cover" :alt="`cover-${name}`" class="avatar rounded-full">
       <br>
       <div class="relative">
