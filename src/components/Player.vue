@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-center">
 
-    <div class=" w-96">
+    <div class="w-96">
       {{ name }}
       <img width="100" height="100" :src="cover" :alt="`cover-${name}`" class="avatar rounded-full">
       <br>
@@ -18,24 +18,26 @@
             @input="setTime"
             class="range range-xs  radio-primary">
       </div>
-
-
+      <br>
       <div class="flex justify-between">
         <span>{{ secondToTime(time / audio.playbackRate) }}</span>
         <span>{{ secondToTime(duration / audio.playbackRate) }}</span>
       </div>
+      <br>
       <div class="flex ">
         <input type="range" min="0" max="100" :value="audio.volume*100" @input="setVolume">
         <input type="range" min="0.5" max="10" :value="audio.playbackRate" @input="setPlaybackRate" step="0.5">
       </div>
-
+      <br>
       <div class="btn-group ">
         <button @click="play(audio)" class="btn btn-secondary basis-1/2 ">play</button>
         <button @click="stop(audio)" class="btn btn-primary basis-1/2 ">stop</button>
       </div>
+      <br>
       <div class="btn-group ">
-        <button @click="setStart" class="btn btn-secondary basis-1/2 ">setStart</button>
-        <button @click="setEnd" class="btn btn-primary basis-1/2 ">setEnd</button>
+        <button @click="setStart" class="btn btn-secondary basis-1/3 ">setStart</button>
+        <button @click="setEnd" class="btn btn-primary basis-1/3 ">setEnd</button>
+        <button @click="deleteTime" class="btn btn-secondary basis-1/3 ">deleteTime</button>
       </div>
 
     </div>
@@ -88,6 +90,11 @@ if (props.music) {
     else
       duration.value = audio.value.duration
 } else emit('notFound')
+
+function deleteTime() {
+  start.value = false
+  end.value = false
+}
 
 function setStart() {
   startTime.value = audio.value.currentTime
