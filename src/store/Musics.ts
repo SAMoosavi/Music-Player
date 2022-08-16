@@ -1,5 +1,7 @@
 import {defineStore} from "pinia";
-import {AllMusic, Artists, Music} from "../types/types";
+import {AllMusic, Artists, Music, PlayLists} from "../types/types";
+import {ref} from "vue";
+import type {Ref} from "vue";
 
 function findDir(allMusic: AllMusic, directory: string): boolean {
     for (const allMusicKey in allMusic) {
@@ -9,60 +11,68 @@ function findDir(allMusic: AllMusic, directory: string): boolean {
     return false
 }
 
-export const useMusic = defineStore("music", {
-    state: () => ({
-        allMusic: <AllMusic>{},
-        playLists: <any>{},
-        directories: <string[]>[],
-        artists: <Artists>{},
-    }),
-    getters: {
-        getAllMusic: (state) => state.allMusic,
-        getPlayLists: (state) => (playList: string) => state.playLists[playList],
-        getDirectories: (state) => state.directories,
-    },
-    actions: {
-        setMusic(pathMusics: string[]) {
-            const {read} = require("jsmediatags")
+export const useMusic = defineStore("music", () => {
 
-            for (const pathMusic of pathMusics) {
-                this.allMusic[pathMusic] = <Music>{
-                    path: pathMusic,
-                    name: pathMusic.split("/").pop(),
-                    type: pathMusic.split("/").pop()?.split('.').pop(),
-                    star: 0,
-                    status: 0,
-                }
-                read(pathMusic, {
-                    onSuccess: async (result: any) => {
-                        console.log(Date.now())
-                        if (this.artists[result.tags.artist])
-                            this.artists[result.tags.artist].push(pathMusic)
-                        else this.artists[result.tags.artist] = <string[]>[pathMusic]
+    const allMusic: Ref<AllMusic> = ref({});
+    const playLists: Ref<PlayLists> = ref({})
+    const directories: Ref<string[]> = ref([])
+    const artists: Ref<Artists> = ref({})
 
-                        localStorage.setItem("artists", JSON.stringify(this.artists))
-                    },
-                    onError: ((error: any) => {
-                        console.log(error)
-                    }),
-                })
+
+    function setMusic(pathMusics: string[]) {
+        const {read} = require("jsmediatags")
+
+        for (const pathMusic of pathMusics) {
+            allMusic.value[pathMusic] = <Music>{
+                path: pathMusic,
+                name: pathMusic.split("/").pop(),
+                type: pathMusic.split("/").pop()?.split('.').pop(),
+                star: 0,
+                status: 0,
             }
-            localStorage.setItem("musics", JSON.stringify(this.allMusic))
-        },
-        setDirectory(pathDirectories: string[]) {
-            for (const pathDirectory of pathDirectories) {
-                if (findDir(this.allMusic, pathDirectory) && !this.directories.find((el) => el == pathDirectory))
-                    this.directories.push(pathDirectory)
-            }
-            localStorage.setItem("directories", JSON.stringify(this.directories))
-        },
-        setPlayList(name: string, list: string[]) {
-            this.playLists[name] = list;
-        },
-        setMusicOnLocalStorage() {
-            const musics = localStorage.getItem("musics");
-            if (musics)
-                this.allMusic = JSON.parse(musics)
+            read(pathMusic, {
+                onSuccess: async (result: any) => {
+                    console.log(Date.now())
+                    if (artists.value[result.tags.artist])
+                        artists.value[result.tags.artist].push(pathMusic)
+                    else artists.value[result.tags.artist] = <string[]>[pathMusic]
+
+                    localStorage.setItem("artists", JSON.stringify(artists))
+                },
+                onError: ((error: any) => {
+                    console.log(error)
+                }),
+            })
         }
-    },
+        localStorage.setItem("musics", JSON.stringify(allMusic.value))
+    }
+
+    function setDirectory(pathDirectories: string[]) {
+        for (const pathDirectory of pathDirectories) {
+            if (findDir(allMusic.value, pathDirectory) && !directories.value.find((el) => el == pathDirectory))
+                directories.value.push(pathDirectory)
+        }
+        localStorage.setItem("directories", JSON.stringify(directories))
+    }
+
+    function setPlayList(name: string, list: string[]) {
+        playLists.value[name] = list;
+    }
+
+    function setMusicOnLocalStorage() {
+        const musics = localStorage.getItem("musics");
+        if (musics)
+            allMusic.value = JSON.parse(musics)
+    }
+
+    return{
+        allMusic,
+        playLists,
+        directories,
+        artists,
+        setMusic,
+        setDirectory,
+        setPlayList,
+        setMusicOnLocalStorage
+    }
 });

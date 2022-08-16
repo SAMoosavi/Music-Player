@@ -13,3 +13,7 @@ export interface AllMusic {
 export interface Artists {
     [key: string]: string[]
 }
+
+export interface PlayLists {
+    [key: string]: string[]
+}
