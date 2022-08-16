@@ -109,6 +109,8 @@ if (props.music) {
       setTimeout(() => {
         if (audio.value)
           duration.value = audio.value.duration
+        while (isNaN(duration.value))
+          duration.value = audio.value.duration
       }, 500)
     else
       duration.value = audio.value.duration
