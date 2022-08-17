@@ -65,7 +65,19 @@ export const useMusic = defineStore("music", () => {
             allMusic.value = JSON.parse(musics)
     }
 
-    return{
+    function setDirectoryOnLocalStorage() {
+        const directory = localStorage.getItem("directories")
+        if (directory)
+            directories.value = JSON.parse(directory)
+    }
+
+    function setArtistOnLocalStorage() {
+        const artist = localStorage.getItem("artists")
+        if (artist)
+            artists.value = JSON.parse(artist)
+    }
+
+    return {
         allMusic,
         playLists,
         directories,
@@ -73,6 +85,8 @@ export const useMusic = defineStore("music", () => {
         setMusic,
         setDirectory,
         setPlayList,
-        setMusicOnLocalStorage
+        setMusicOnLocalStorage,
+        setDirectoryOnLocalStorage,
+        setArtistOnLocalStorage,
     }
 });
