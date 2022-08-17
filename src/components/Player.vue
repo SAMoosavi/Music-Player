@@ -66,8 +66,8 @@
 </template>
 
 <script setup lang="ts">
-import {copyFileSync} from "node:fs"
-import {defineProps, onUnmounted, ref} from "vue";
+import {copyFileSync, rmSync} from "node:fs"
+import {defineProps, onMounted, onUnmounted, ref, watch} from "vue";
 import type {Ref} from "vue";
 import {Music} from "../types/types";
 
@@ -87,20 +87,45 @@ const time: Ref<number> = ref(0)
 const duration: Ref<number> = ref(0)
 const audio: Ref<HTMLAudioElement> = ref(new Audio())
 
-if (props.music) {
-  const pathMusic = props.music.path
-  const type = props.music.type
+const hasMusic: Ref<boolean> = ref(!!props.music)
 
-  const {read} = require("jsmediatags")
-  read(pathMusic, {
-    onSuccess: function (result: any) {
-      getCover(result);
-      getName(result)
-    },
-    onError: function (error: { type: any; info: any; }) {
-      console.error(':(', error.type, error.info);
-    }
-  });
+onMounted(() => createMusic())
+watch(() => props.music, () => {
+  hasMusic.value = !!props.music
+  createMusic()
+})
+
+let pPath: string = "";
+
+function removeFile() {
+  if (pPath != "")
+    rmSync(pPath)
+}
+
+function createMusic() {
+  if (hasMusic.value) {
+    const pathMusic = props.music.path
+
+    const {read} = require("jsmediatags")
+    read(pathMusic, {
+      onSuccess: function (result: any) {
+        getCover(result);
+        getName(result)
+      },
+      onError: function (error: { type: any; info: any; }) {
+        console.error(':(', error.type, error.info);
+      }
+    });
+    const type = props.music.type.toLowerCase()
+    const i = Math.random().toString().split('.').pop()
+    let newPath = `./${i}.${type}`
+    audio.value.pause()
+    removeFile()
+    copyFileSync(pathMusic, newPath)
+    pPath = newPath
+    audio.value = new Audio(newPath)
+    audio.value.load()
+    play()
 
   copyFileSync(pathMusic, `./music.${type}`)
   audio.value = new Audio(`./music.${type}`)
@@ -112,9 +137,9 @@ if (props.music) {
         while (isNaN(duration.value))
           duration.value = audio.value.duration
       }, 500)
-    else
-      duration.value = audio.value.duration
-} else emit('notFound')
+    else duration.value = audio.value.duration
+  } else emit('notFound')
+}
 
 function goToLikeTime(likeTime: number) {
   likeTime -= 3
@@ -164,21 +189,21 @@ function setTime(ev: any) {
 }
 
 onUnmounted(() => {
-  if (audio.value)
-    audio.value.pause()
+  audio.value.pause()
+  removeFile()
 })
 
 let getTime: NodeJS.Timer | null = null;
 
-function play(audio: HTMLAudioElement) {
-  audio.play()
+function play() {
+  audio.value.play()
   getTime = setInterval(() => {
-    if (start.value && audio.currentTime < startTime.value)
-      audio.currentTime = startTime.value
-    else if (end.value && audio.currentTime > endTime.value)
-      audio.currentTime = startTime.value
+    if (start.value && audio.value.currentTime < startTime.value)
+      audio.value.currentTime = startTime.value
+    else if (end.value && audio.value.currentTime > endTime.value)
+      audio.value.currentTime = startTime.value
 
-    time.value = audio.currentTime
+    time.value = audio.value.currentTime
     if (time.value == duration.value) {
       if (getTime)
         clearInterval(getTime)
@@ -187,8 +212,8 @@ function play(audio: HTMLAudioElement) {
   }, 1000)
 }
 
-function stop(audio: HTMLAudioElement) {
-  audio.pause()
+function stop() {
+  audio.value.pause()
   if (getTime)
     clearInterval(getTime)
 }
