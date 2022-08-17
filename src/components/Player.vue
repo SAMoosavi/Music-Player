@@ -65,6 +65,15 @@
       </button>
     </div>
     <br>
+    <div class="btn-group">
+      <button @click="emit('shuffle')" class="btn btn-secondary basis-1/2 " :disabled="!hasMusic ">
+        shuffle
+      </button>
+      <button @click="emit('loop')" class="btn btn-primary basis-1/2 " :disabled="!hasMusic ">
+        loop
+      </button>
+    </div>
+    <br>
     <div class="rating">
       <input value="0" type="radio" v-model="rating" class="hidden">
       <input v-for="i in 5" :key="i" type="radio" :value="i" v-model="rating"
@@ -81,7 +90,7 @@ import {Music} from "../types/types";
 
 
 const props = defineProps<{ music: Music, hasNext: boolean, hasPrevent: boolean }>()
-const emit = defineEmits(['notFound', "finish", "prevent", "next"])
+const emit = defineEmits(['notFound', "finish", "prevent", "next","loop","shuffle"])
 
 const rating: Ref<number> = ref(0)
 const likeTimes: Ref<number[]> = ref([])
