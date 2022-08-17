@@ -135,9 +135,6 @@ function createMusic() {
     audio.value.load()
     play()
 
-  copyFileSync(pathMusic, `./music.${type}`)
-  audio.value = new Audio(`./music.${type}`)
-  if (audio.value)
     if (isNaN(audio.value.duration))
       setTimeout(() => {
         if (audio.value)
