@@ -17,7 +17,22 @@ export const useMusic = defineStore("music", () => {
     const playLists: Ref<PlayLists> = ref({})
     const directories: Ref<string[]> = ref([])
     const artists: Ref<Artists> = ref({})
+    const currentPlayList: Ref<string[]> = ref([])
+    const currentList: Ref<string> = ref("")
 
+    function setCurrentList(name: string, List?: string[]) {
+        currentList.value = name
+        localStorage.setItem("currentList", currentList.value)
+        if (playLists.value[name])
+            currentPlayList.value = playLists.value[name]
+        else {
+            if (List)
+                currentPlayList.value = List
+            else
+                throw "not found List"
+        }
+        localStorage.setItem("currentPlayList", JSON.stringify(currentPlayList.value))
+    }
 
     function setMusic(pathMusics: string[]) {
         const {read} = require("jsmediatags")
@@ -77,16 +92,29 @@ export const useMusic = defineStore("music", () => {
             artists.value = JSON.parse(artist)
     }
 
+    function setCurrentPlayListOnLocalStorage() {
+        const currentListOnLocalStorage = localStorage.getItem("currentList")
+        if (currentListOnLocalStorage)
+            currentList.value = currentListOnLocalStorage
+        const currentPlayListOnLocalstorage = localStorage.getItem("currentPlayList")
+        if (currentPlayListOnLocalstorage)
+            currentPlayList.value = JSON.parse(currentPlayListOnLocalstorage)
+    }
+
     return {
         allMusic,
         playLists,
         directories,
         artists,
+        currentList,
+        currentPlayList,
         setMusic,
         setDirectory,
         setPlayList,
+        setCurrentList,
         setMusicOnLocalStorage,
         setDirectoryOnLocalStorage,
         setArtistOnLocalStorage,
+        setCurrentPlayListOnLocalStorage,
     }
 });
