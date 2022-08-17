@@ -53,7 +53,7 @@ export const useMusic = defineStore("music", () => {
                         artists.value[result.tags.artist].push(pathMusic)
                     else artists.value[result.tags.artist] = <string[]>[pathMusic]
 
-                    localStorage.setItem("artists", JSON.stringify(artists))
+                    localStorage.setItem("artists", JSON.stringify(artists.value))
                 },
                 onError: ((error: any) => {
                     console.log(error)
@@ -61,6 +61,7 @@ export const useMusic = defineStore("music", () => {
             })
         }
         localStorage.setItem("musics", JSON.stringify(allMusic.value))
+        localStorage.setItem("playLists", JSON.stringify(playLists.value))
     }
 
     function setDirectory(pathDirectories: string[]) {
@@ -68,7 +69,7 @@ export const useMusic = defineStore("music", () => {
             if (findDir(allMusic.value, pathDirectory) && !directories.value.find((el) => el == pathDirectory))
                 directories.value.push(pathDirectory)
         }
-        localStorage.setItem("directories", JSON.stringify(directories))
+        localStorage.setItem("directories", JSON.stringify(directories.value))
     }
 
     function setPlayList(name: string, list: string[]) {
