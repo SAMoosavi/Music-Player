@@ -1,66 +1,74 @@
 <template>
-  <div class="flex justify-center">
-
-    <div class="w-96">
-      <div>
-        {{ name }}
-      </div>
-      <br>
-      <img width="100" height="100" :src="cover" :alt="`cover-${name}`" class="avatar rounded-full">
-      <br>
-      <div class="relative">
-        <div v-if="start" class="absolute bg-red-800 w-1 h-5 -top-3 z-50"
-             :style="`left: ${startTime/duration*100}%`"></div>
-        <div v-if="end" class="absolute bg-green-800 w-1 h-5 -top-3 z-50"
-             :style="`left: ${endTime/duration*100}%`"></div>
-        <input
-            type="range"
-            min="0"
-            :max="duration"
-            :value="time"
-            @input="setTime"
-            class="range range-xs  radio-primary">
-        <div v-for="likeTime in likeTimes" :key="likeTime" class="absolute bg-yellow-500 w-1 h-5 top-3 z-50"
-             :style="`left: ${likeTime/duration*100}%`"
-             @click="deleteLikeTime(likeTime)"></div>
-      </div>
-      <br>
-      <div class="flex justify-between">
-        <span>{{ secondToTime(time / audio.playbackRate) }}</span>
-        <span>{{ secondToTime(duration / audio.playbackRate) }}</span>
-      </div>
-      <br>
-      <div class="flex ">
-        <input type="range" min="0" max="100" :value="audio.volume*100" @input="setVolume">
-        <input type="range" min="0.5" max="10" :value="audio.playbackRate" @input="setPlaybackRate" step="0.5">
-      </div>
-      <br>
-      <div class="btn-group ">
-        <button @click="play(audio)" class="btn btn-secondary basis-1/2 ">play</button>
-        <button @click="stop(audio)" class="btn btn-primary basis-1/2 ">stop</button>
-      </div>
-      <br>
-      <div class="btn-group ">
-        <button @click="setStart" class="btn btn-secondary basis-1/3 ">setStart</button>
-        <button @click="setEnd" class="btn btn-primary basis-1/3 ">setEnd</button>
-        <button @click="deleteTime" class="btn btn-secondary basis-1/3 ">deleteTime</button>
-      </div>
-      <br>
-      <div class="btn-group">
-        <button @click="addLikeTime" class="btn btn-secondary basis-full ">add like time</button>
-        <div class="flex flex-wrap gap-0 rounded-md">
-          <div v-for="likeTime in likeTimes" :key="likeTime" class="btn btn-sm rounded-none"
-               @click="goToLikeTime(likeTime)">
-            {{ secondToTime(likeTime / audio.playbackRate) }}
-          </div>
+  <div class="card mx-1">
+    <div>
+      {{ name }}
+    </div>
+    <br>
+    <img width="100" height="100" :src="cover" :alt="`cover-${name}`" class="avatar rounded-full">
+    <br>
+    <div class="relative">
+      <div v-if="start" class="absolute bg-red-800 w-1 h-5 -top-3 z-50"
+           :style="`left: ${startTime/duration*100}%`"></div>
+      <div v-if="end" class="absolute bg-green-800 w-1 h-5 -top-3 z-50"
+           :style="`left: ${endTime/duration*100}%`"></div>
+      <input
+          :disabled="!hasMusic"
+          type="range"
+          min="0"
+          :max="duration"
+          :value="time"
+          @input="setTime"
+          class="range range-xs  radio-primary">
+      <div v-for="likeTime in likeTimes" :key="likeTime" class="absolute bg-yellow-500 w-1 h-5 top-3 z-50"
+           :style="`left: ${likeTime/duration*100}%`"
+           @click="deleteLikeTime(likeTime)"></div>
+    </div>
+    <br>
+    <div class="flex justify-between">
+      <span>{{ secondToTime(time / audio.playbackRate) }}</span>
+      <span>{{ secondToTime(duration / audio.playbackRate) }}</span>
+    </div>
+    <br>
+    <div class="flex ">
+      <input type="range" min="0" max="100" :value="audio.volume*100" @input="setVolume" :disabled="!hasMusic">
+      <input type="range" min="0.5" max="10" :value="audio.playbackRate" @input="setPlaybackRate" step="0.5"
+             :disabled="!hasMusic">
+    </div>
+    <br>
+    <div class="btn-group ">
+      <button @click="play" class="btn btn-secondary basis-1/2 " :disabled="!hasMusic">play</button>
+      <button @click="stop" class="btn btn-primary basis-1/2 " :disabled="!hasMusic">stop</button>
+    </div>
+    <br>
+    <div class="btn-group ">
+      <button @click="setStart" class="btn btn-secondary basis-1/3 " :disabled="!hasMusic">setStart</button>
+      <button @click="setEnd" class="btn btn-primary basis-1/3 " :disabled="!hasMusic">setEnd</button>
+      <button @click="deleteTime" class="btn btn-secondary basis-1/3 " :disabled="!hasMusic">deleteTime</button>
+    </div>
+    <br>
+    <div class="btn-group">
+      <button @click="addLikeTime" class="btn btn-secondary basis-full " :disabled="!hasMusic">add like time</button>
+      <div class="flex flex-wrap gap-0 rounded-md">
+        <div v-for="likeTime in likeTimes" :key="likeTime" class="btn btn-sm rounded-none"
+             @click="goToLikeTime(likeTime)">
+          {{ secondToTime(likeTime / audio.playbackRate) }}
         </div>
       </div>
-      <br>
-      <div class="rating">
-        <input value="0" type="radio" v-model="rating" class="hidden">
-        <input v-for="i in 5" :key="i" type="radio" :value="i" v-model="rating"
-               class="mask mask-star-2 bg-orange-400"/>
-      </div>
+    </div>
+    <br>
+    <div class="btn-group">
+      <button @click="emit('next')" class="btn btn-secondary basis-1/2 " :disabled="!hasMusic || !hasNext">
+        next
+      </button>
+      <button @click="emit('prevent')" class="btn btn-primary basis-1/2 " :disabled="!hasMusic || !hasPrevent">
+        prevent
+      </button>
+    </div>
+    <br>
+    <div class="rating">
+      <input value="0" type="radio" v-model="rating" class="hidden">
+      <input v-for="i in 5" :key="i" type="radio" :value="i" v-model="rating"
+             class="mask mask-star-2 bg-orange-400" :disabled="!hasMusic"/>
     </div>
   </div>
 </template>
@@ -72,8 +80,8 @@ import type {Ref} from "vue";
 import {Music} from "../types/types";
 
 
-const props = defineProps<{ music: Music }>()
-const emit = defineEmits(['notFound', "finish"])
+const props = defineProps<{ music: Music, hasNext: boolean, hasPrevent: boolean }>()
+const emit = defineEmits(['notFound', "finish", "prevent", "next"])
 
 const rating: Ref<number> = ref(0)
 const likeTimes: Ref<number[]> = ref([])
