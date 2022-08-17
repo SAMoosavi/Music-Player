@@ -103,6 +103,12 @@ export const useMusic = defineStore("music", () => {
             currentPlayList.value = JSON.parse(currentPlayListOnLocalstorage)
     }
 
+    function setPlayListOnLocalStorage() {
+        const playListOnLocalStorage = localStorage.getItem('playList')
+        if (playListOnLocalStorage)
+            playLists.value = JSON.parse(playListOnLocalStorage)
+    }
+
     return {
         allMusic,
         playLists,
@@ -118,5 +124,6 @@ export const useMusic = defineStore("music", () => {
         setDirectoryOnLocalStorage,
         setArtistOnLocalStorage,
         setCurrentPlayListOnLocalStorage,
+        setPlayListOnLocalStorage,
     }
 });
