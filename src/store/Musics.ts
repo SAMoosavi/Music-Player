@@ -14,7 +14,7 @@ function findDir(allMusic: AllMusic, directory: string): boolean {
 export const useMusic = defineStore("music", () => {
 
     const allMusic: Ref<AllMusic> = ref({});
-    const playLists: Ref<PlayLists> = ref({})
+    const playLists: Ref<PlayLists> = ref({all: []})
     const directories: Ref<string[]> = ref([])
     const artists: Ref<Artists> = ref({})
     const currentPlayList: Ref<string[]> = ref([])
@@ -45,6 +45,7 @@ export const useMusic = defineStore("music", () => {
                 star: 0,
                 status: 0,
             }
+            playLists.value['all'].push(pathMusic)
             read(pathMusic, {
                 onSuccess: async (result: any) => {
                     console.log(Date.now())
