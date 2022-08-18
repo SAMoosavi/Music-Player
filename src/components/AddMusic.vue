@@ -45,11 +45,11 @@ function openFiles() {
   dialog.showOpenDialog({
     title: "Select Folder Music",
     properties: ['openDirectory']
-  }).then((result: any) => {
+  }).then(async (result: any) => {
         if (!result.canceled) {
           nextDir(result.filePaths[0])
         } else alert("canceled")
-        Music.setMusic(musics)
+        await Music.setMusic(musics)
         Music.setDirectory(directory)
       }
   ).catch((error: any) => {
