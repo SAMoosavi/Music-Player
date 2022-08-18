@@ -57,19 +57,19 @@
     </div>
     <br>
     <div class="btn-group">
-      <button @click="$emit('next')" class="btn btn-secondary basis-1/2 " :disabled="!hasMusic || !hasNext">
+      <button @click="emits('next')" class="btn btn-secondary basis-1/2 " :disabled="!hasMusic || !hasNext">
         next
       </button>
-      <button @click="$emit('prevent')" class="btn btn-primary basis-1/2 " :disabled="!hasMusic || !hasPrevent">
+      <button @click="emits('prevent')" class="btn btn-primary basis-1/2 " :disabled="!hasMusic || !hasPrevent">
         prevent
       </button>
     </div>
     <br>
     <div class="btn-group">
-      <button @click="$emit('shuffle')" class="btn btn-secondary basis-1/2 " :disabled="!hasMusic ">
+      <button @click="emits('shuffle')" class="btn btn-secondary basis-1/2 " :disabled="!hasMusic ">
         shuffle
       </button>
-      <button @click="$emit('loop')" class="btn btn-primary basis-1/2 " :disabled="!hasMusic ">
+      <button @click="emits('loop')" class="btn btn-primary basis-1/2 " :disabled="!hasMusic ">
         loop
       </button>
     </div>
@@ -90,7 +90,7 @@ import {Music} from "../types/types";
 
 
 const props = defineProps<{ music: Music, hasNext: boolean, hasPrevent: boolean }>()
-const emit = defineEmits(['notFound', "finish", "prevent", "next", "loop", "shuffle"])
+const emits = defineEmits(['notFound', "finish", "prevent", "next", "loop", "shuffle"])
 
 const rating: Ref<number> = ref(0)
 const likeTimes: Ref<number[]> = ref([])
@@ -152,7 +152,7 @@ function createMusic() {
           duration.value = audio.value.duration
       }, 500)
     else duration.value = audio.value.duration
-  } else emit('notFound')
+  } else emits('notFound')
 }
 
 function goToLikeTime(likeTime: number) {
@@ -221,7 +221,7 @@ function play() {
     if (time.value == duration.value) {
       if (getTime)
         clearInterval(getTime)
-      emit('finish')
+      emits('finish')
     }
   }, 1000)
 }
