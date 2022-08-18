@@ -122,12 +122,12 @@ function removeFile() {
 function createMusic() {
   if (hasMusic.value) {
     const pathMusic = props.music.path
+    name.value = props.music.name
 
     const {read} = require("jsmediatags")
     read(pathMusic, {
       onSuccess: function (result: any) {
         getCover(result);
-        getName(result)
       },
       onError: function (error: { type: any; info: any; }) {
         console.error(':(', error.type, error.info);
@@ -256,10 +256,6 @@ function getCover(music: { tags: { picture: { data: any; }; }; }) {
   }
   cover.value = `data:${data.format};base64,${window.btoa(base64String)}`;
 
-}
-
-function getName(music: { tags: { title: string; }; }) {
-  name.value = music.tags.title
 }
 
 </script>
