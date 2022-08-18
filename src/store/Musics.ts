@@ -25,7 +25,7 @@ export const useMusic = defineStore("music", () => {
         localStorage.setItem("currentList", currentPlayListName.value)
         if (List)
             currentPlayList.value = List
-        else if (playLists.value[name]) {
+        else if (name in playLists.value) {
             currentPlayList.value = playLists.value[name]
         } else {
             throw "not found List"
@@ -50,20 +50,19 @@ export const useMusic = defineStore("music", () => {
                     if (artists.value[result.tags.artist])
                         artists.value[result.tags.artist].push(pathMusic)
                     else artists.value[result.tags.artist] = <string[]>[pathMusic]
-
+                    allMusic.value[pathMusic].name = result.tags.title ? allMusic.value[pathMusic].name + '(' + result.tags.title + ')' : allMusic.value[pathMusic].name
                     localStorage.setItem("artists", JSON.stringify(artists.value))
+                    localStorage.setItem("musics", JSON.stringify(allMusic.value))
                 },
                 onError: ((error: any) => {
-                    console.log(error)
+                    console.error(error)
                 }),
             })
         }
-        localStorage.setItem("musics", JSON.stringify(allMusic.value))
         localStorage.setItem("playLists", JSON.stringify(playLists.value))
     }
 
     function setDirectory(pathDirectories: string[]) {
-        console.log(pathDirectories)
         for (const pathDirectory of pathDirectories) {
             if (findDir(allMusic.value, pathDirectory) && !directories.value.find((el) => el == pathDirectory))
                 directories.value.push(pathDirectory)
@@ -72,7 +71,11 @@ export const useMusic = defineStore("music", () => {
     }
 
     function setPlayList(name: string, list: string[]) {
-        playLists.value[name] = list;
+        if (name in playLists.value)
+            playLists.value[name] = list;
+        else
+            playLists.value = {name: list, ...playLists.value}
+        localStorage.setItem("playLists", JSON.stringify(playLists.value))
     }
 
     function setMusicOnLocalStorage() {
@@ -106,8 +109,11 @@ export const useMusic = defineStore("music", () => {
         const playListOnLocalStorage = localStorage.getItem('playLists')
         if (playListOnLocalStorage) {
             playLists.value = JSON.parse(playListOnLocalStorage)
-            console.log(playLists.value)
         }
+    }
+
+    function hasPlayList(name: string) {
+        return name in playLists.value
     }
 
     return {
@@ -126,5 +132,6 @@ export const useMusic = defineStore("music", () => {
         setArtistOnLocalStorage,
         setCurrentPlayListOnLocalStorage,
         setPlayListOnLocalStorage,
+        hasPlayList,
     }
 });
