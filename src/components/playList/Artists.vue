@@ -22,11 +22,9 @@ import {storeToRefs} from "pinia";
 import {onMounted, ref, watch} from "vue";
 import type {Ref} from "vue";
 
-const emit = defineEmits(['play'])
-
 const Music = useMusic()
 
-const {artists, allMusic, currentList} = storeToRefs(Music)
+const {artists,  currentPlayListName} = storeToRefs(Music)
 
 const artistsList: Ref<string[]> = ref([])
 
@@ -44,11 +42,11 @@ watch(() => artists.value.length, () => getArtist())
 
 function setPlayListArtist(artist: string | 0) {
   if (artist == 0) {
-    if (!(currentList.value == 'all')) {
+    if (!(currentPlayListName.value == 'all')) {
       Music.setCurrentList("all")
     }
   } else {
-    if (!(currentList.value == artist)) {
+    if (!(currentPlayListName.value == artist)) {
       Music.setCurrentList(artist, artists.value[artist])
     }
   }

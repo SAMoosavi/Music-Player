@@ -22,15 +22,15 @@ import {storeToRefs} from "pinia";
 
 const Music = useMusic()
 
-const {directories, allMusic, currentList} = storeToRefs(Music)
+const {directories, allMusic, currentPlayListName} = storeToRefs(Music)
 
 function setPlayListDir(dir: string | 0) {
   if (dir == 0) {
-    if (!(currentList.value == 'all')) {
+    if (!(currentPlayListName.value == 'all')) {
       Music.setCurrentList("all")
     }
   } else {
-    if (!(currentList.value == dir)) {
+    if (!(currentPlayListName.value == dir)) {
       let list: string[] = []
       for (const allMusicKey in allMusic.value) {
         if (allMusicKey.indexOf(dir) == 0) {

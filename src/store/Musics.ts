@@ -18,18 +18,17 @@ export const useMusic = defineStore("music", () => {
     const directories: Ref<string[]> = ref([])
     const artists: Ref<Artists> = ref({})
     const currentPlayList: Ref<string[]> = ref([])
-    const currentList: Ref<string> = ref("")
+    const currentPlayListName: Ref<string> = ref("")
 
     function setCurrentList(name: string, List?: string[]) {
-        currentList.value = name
-        localStorage.setItem("currentList", currentList.value)
-        if (playLists.value[name])
+        currentPlayListName.value = name
+        localStorage.setItem("currentList", currentPlayListName.value)
+        if (List)
+            currentPlayList.value = List
+        else if (playLists.value[name]) {
             currentPlayList.value = playLists.value[name]
-        else {
-            if (List)
-                currentPlayList.value = List
-            else
-                throw "not found List"
+        } else {
+            throw "not found List"
         }
         localStorage.setItem("currentPlayList", JSON.stringify(currentPlayList.value))
     }
