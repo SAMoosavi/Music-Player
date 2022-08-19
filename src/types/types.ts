@@ -17,3 +17,10 @@ export interface Artists {
 export interface PlayLists {
     [key: string]: string[]
 }
+
+export interface Setting {
+    pPath: string,
+    numberOfMusicOnList: number,
+    hasShuffle: boolean,
+    hasLoop: boolean
+}
