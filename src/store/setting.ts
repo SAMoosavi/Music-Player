@@ -28,19 +28,14 @@ export const useSetting = defineStore("setting", () => {
     }
 
 
-    function setSettingOnData() {
-        const path = settingStore.read()
-        if (path)
-            setting.pPath = path
-        const num = settingStore.read()
-        if (num)
-            setting.numberOfMusicOnList = Number(num)
-        const shuffle = settingStore.read()
-        if (shuffle)
-            setting.hasShuffle = Boolean(shuffle)
-        const loop = settingStore.read()
-        if (loop)
-            setting.hasLoop = Boolean(loop)
+     function setSettingOnData() {
+        const settingOnStore = settingStore.read()
+        if (settingOnStore) {
+            for (const settingKey in setting) {
+                // @ts-ignore
+                setting[settingKey] = settingOnStore[settingKey]
+            }
+        }
     }
 
     return {
