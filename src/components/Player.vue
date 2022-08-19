@@ -66,10 +66,12 @@
     </div>
     <br>
     <div class="btn-group">
-      <button @click="emits('shuffle')" class="btn btn-secondary basis-1/2 " :disabled="!hasMusic ">
+      <button @click="emits('shuffle')" class="btn btn-secondary basis-1/2 " :class="{'btn-outline':hasShuffle}"
+              :disabled="!hasMusic ">
         shuffle
       </button>
-      <button @click="emits('loop')" class="btn btn-primary basis-1/2 " :disabled="!hasMusic ">
+      <button @click="emits('loop')" class="btn btn-primary basis-1/2 " :class="{'btn-outline':hasLoop}"
+              :disabled="!hasMusic ">
         loop
       </button>
     </div>
@@ -83,13 +85,15 @@
 </template>
 
 <script setup lang="ts">
-import {copyFileSync, rmSync} from "node:fs"
+import {copyFileSync, rmSync, existsSync} from "node:fs"
 import {defineProps, onMounted, onUnmounted, ref, watch} from "vue";
 import type {Ref} from "vue";
 import {Music} from "../types/types";
+import {useSetting} from "../store/setting";
+import {storeToRefs} from "pinia";
 
 
-const props = defineProps<{ music: Music, hasNext: boolean, hasPrevent: boolean }>()
+const props = defineProps<{ music: Music, hasNext: boolean, hasPrevent: boolean, hasShuffle: boolean, hasLoop: boolean }>()
 const emits = defineEmits(['notFound', "finish", "prevent", "next", "loop", "shuffle"])
 
 const rating: Ref<number> = ref(0)
@@ -106,17 +110,22 @@ const audio: Ref<HTMLAudioElement> = ref(new Audio())
 
 const hasMusic: Ref<boolean> = ref(!!props.music)
 
+const Setting = useSetting()
+const {setting} = storeToRefs(Setting)
+
 onMounted(() => createMusic())
 watch(() => props.music, () => {
   hasMusic.value = !!props.music
   createMusic()
 })
 
-let pPath: string = "";
 
 function removeFile() {
-  if (pPath != "")
-    rmSync(pPath)
+  if (setting.value.pPath != "") {
+    console.log(existsSync(setting.value.pPath))
+    if (existsSync(setting.value.pPath))
+      rmSync(setting.value.pPath)
+  }
 }
 
 function createMusic() {
@@ -135,11 +144,11 @@ function createMusic() {
     });
     const type = props.music.type.toLowerCase()
     const i = Math.random().toString().split('.').pop()
-    let newPath = `./${i}.${type}`
+    let newPath = `./src/Music/${i}.${type}`
     audio.value.pause()
     removeFile()
     copyFileSync(pathMusic, newPath)
-    pPath = newPath
+    Setting.setPPath(newPath)
     audio.value = new Audio(newPath)
     audio.value.load()
     play()
