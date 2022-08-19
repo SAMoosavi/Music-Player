@@ -11,8 +11,9 @@ node_modules
 dist
 dist-ssr
 *.local
+
 # data File
-src/data
+*.json
 *.mp3
 
 # Editor directories and files
