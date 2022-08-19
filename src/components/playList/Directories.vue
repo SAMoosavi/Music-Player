@@ -21,6 +21,7 @@ import {useMusic} from "../../store/Musics";
 import {storeToRefs} from "pinia";
 
 const Music = useMusic()
+defineEmits(['play'])
 
 const {directories, allMusic, currentPlayListName} = storeToRefs(Music)
 

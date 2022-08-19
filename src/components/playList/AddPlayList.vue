@@ -26,7 +26,7 @@ import type {Ref} from "vue"
 import {useMusic} from "../../store/Musics";
 import {storeToRefs} from "pinia";
 
-const emits = defineEmits(['goTo'])
+const emits = defineEmits(['play'])
 
 const Music = useMusic()
 const {playLists, allMusic} = storeToRefs(Music)
@@ -42,7 +42,7 @@ const search: Ref<string> = ref("")
 function create() {
   if (!Music.hasPlayList(name.value)) {
     Music.setPlayList(name.value, list.value)
-    emits('goTo', name.value)
+    emits('play')
     Music.setCurrentList(name.value)
     name.value = ""
     list.value = []

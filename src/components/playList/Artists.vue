@@ -22,6 +22,8 @@ import {storeToRefs} from "pinia";
 import {onMounted, ref, watch} from "vue";
 import type {Ref} from "vue";
 
+defineEmits(['play'])
+
 const Music = useMusic()
 
 const {artists,  currentPlayListName} = storeToRefs(Music)
