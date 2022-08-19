@@ -122,7 +122,6 @@ watch(() => props.music, () => {
 
 function removeFile() {
   if (setting.value.pPath != "") {
-    console.log(existsSync(setting.value.pPath))
     if (existsSync(setting.value.pPath))
       rmSync(setting.value.pPath)
   }
