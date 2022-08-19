@@ -2,6 +2,7 @@ import {defineStore} from "pinia";
 import {AllMusic, Artists, Music, PlayLists} from "../types/types";
 import {ref} from "vue";
 import type {Ref} from "vue";
+import WorkFile from "../functions/workFile";
 
 function findDir(allMusic: AllMusic, directory: string): boolean {
     for (const allMusicKey in allMusic) {
@@ -14,15 +15,21 @@ function findDir(allMusic: AllMusic, directory: string): boolean {
 export const useMusic = defineStore("music", () => {
 
     const allMusic: Ref<AllMusic> = ref({});
+    const allMusicStore = new WorkFile("allMusic")
     const playLists: Ref<PlayLists> = ref({all: []})
+    const playListsStore = new WorkFile("playLists")
     const directories: Ref<string[]> = ref([])
+    const directoriesStore = new WorkFile("directories")
     const artists: Ref<Artists> = ref({})
+    const artistsStore = new WorkFile("artists")
     const currentPlayList: Ref<string[]> = ref([])
+    const currentPlayListStore = new WorkFile('currentPlayList')
     const currentPlayListName: Ref<string> = ref("")
+    const currentPlayListNameStore = new WorkFile("currentPlayListName")
 
     function setCurrentList(name: string, List?: string[]) {
         currentPlayListName.value = name
-        localStorage.setItem("currentList", currentPlayListName.value)
+        currentPlayListNameStore.write(currentPlayListName.value)
         if (List)
             currentPlayList.value = List
         else if (hasPlayList(name)) {
@@ -30,7 +37,7 @@ export const useMusic = defineStore("music", () => {
         } else {
             throw "not found List"
         }
-        localStorage.setItem("currentPlayList", JSON.stringify(currentPlayList.value))
+        currentPlayListStore.write(currentPlayList.value)
     }
 
     async function setMusic(pathMusics: string[]) {
@@ -51,15 +58,15 @@ export const useMusic = defineStore("music", () => {
                         artists.value[result.tags.artist].push(pathMusic)
                     else artists.value[result.tags.artist] = <string[]>[pathMusic]
                     allMusic.value[pathMusic].name = result.tags.title ? allMusic.value[pathMusic].name + '(' + result.tags.title + ')' : allMusic.value[pathMusic].name
-                    localStorage.setItem("artists", JSON.stringify(artists.value))
-                    localStorage.setItem("musics", JSON.stringify(allMusic.value))
+                    artistsStore.write(artists.value)
+                    allMusicStore.write(allMusic.value)
                 },
                 onError: ((error: any) => {
                     console.error(error)
                 }),
             })
         }
-        localStorage.setItem("playLists", JSON.stringify(playLists.value))
+        playListsStore.write(playLists.value)
     }
 
     function setDirectory(pathDirectories: string[]) {
@@ -67,7 +74,7 @@ export const useMusic = defineStore("music", () => {
             if (findDir(allMusic.value, pathDirectory) && !directories.value.find((el) => el == pathDirectory))
                 directories.value.push(pathDirectory)
         }
-        localStorage.setItem("directories", JSON.stringify(directories.value))
+        directoriesStore.write(directories.value)
     }
 
     function setPlayList(name: string, list: string[]) {
@@ -76,40 +83,40 @@ export const useMusic = defineStore("music", () => {
         else {
             playLists.value = {[name]: list, ...playLists.value}
         }
-        localStorage.setItem("playLists", JSON.stringify(playLists.value))
+        playListsStore.write(playLists.value)
     }
 
-    function setMusicOnLocalStorage() {
-        const musics = localStorage.getItem("musics");
+    function setMusicOnData() {
+        const musics = allMusicStore.read();
         if (musics)
-            allMusic.value = JSON.parse(musics)
+            allMusic.value = musics
     }
 
-    function setDirectoryOnLocalStorage() {
-        const directory = localStorage.getItem("directories")
+    function setDirectoryOnData() {
+        const directory = directoriesStore.read()
         if (directory)
-            directories.value = JSON.parse(directory)
+            directories.value = directory
     }
 
-    function setArtistOnLocalStorage() {
-        const artist = localStorage.getItem("artists")
+    function setArtistOnData() {
+        const artist = artistsStore.read()
         if (artist)
-            artists.value = JSON.parse(artist)
+            artists.value = artist
     }
 
-    function setCurrentPlayListOnLocalStorage() {
-        const currentListOnLocalStorage = localStorage.getItem("currentList")
-        if (currentListOnLocalStorage)
-            currentPlayListName.value = currentListOnLocalStorage
-        const currentPlayListOnLocalstorage = localStorage.getItem("currentPlayList")
+    function setCurrentPlayListOnData() {
+        const currentListNameOnStore = currentPlayListNameStore.read()
+        if (currentListNameOnStore)
+            currentPlayListName.value = currentListNameOnStore
+        const currentPlayListOnLocalstorage = currentPlayListStore.read()
         if (currentPlayListOnLocalstorage)
-            currentPlayList.value = JSON.parse(currentPlayListOnLocalstorage)
+            currentPlayList.value = currentPlayListOnLocalstorage
     }
 
-    function setPlayListOnLocalStorage() {
-        const playListOnLocalStorage = localStorage.getItem('playLists')
-        if (playListOnLocalStorage) {
-            playLists.value = JSON.parse(playListOnLocalStorage)
+    function setPlayListOnData() {
+        const playList = playListsStore.read()
+        if (playList) {
+            playLists.value = playList
         }
     }
 
@@ -128,11 +135,11 @@ export const useMusic = defineStore("music", () => {
         setDirectory,
         setPlayList,
         setCurrentList,
-        setMusicOnLocalStorage,
-        setDirectoryOnLocalStorage,
-        setArtistOnLocalStorage,
-        setCurrentPlayListOnLocalStorage,
-        setPlayListOnLocalStorage,
+        setMusicOnData,
+        setDirectoryOnData,
+        setArtistOnData,
+        setCurrentPlayListOnData,
+        setPlayListOnData,
         hasPlayList,
     }
 });
