@@ -34,9 +34,7 @@ const {playLists, allMusic} = storeToRefs(Music)
 const name: Ref<string> = ref("")
 const list: Ref<string[]> = ref([])
 
-const all: string[] = playLists.value['all']
-
-const listMusic: Ref<string[]> = ref(all)
+const listMusic: Ref<string[]> = ref(playLists.value['all'])
 const search: Ref<string> = ref("")
 
 function create() {
@@ -51,6 +49,6 @@ function create() {
 
 watch(search, (v) => {
   const a = v.toLowerCase()
-  listMusic.value = all.filter(value => value.toLowerCase().indexOf(a) != -1)
+  listMusic.value = playLists.value['all'].filter(value => value.toLowerCase().indexOf(a) != -1)
 })
 </script>
