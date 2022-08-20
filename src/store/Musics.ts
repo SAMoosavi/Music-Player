@@ -86,7 +86,7 @@ export const useMusic = defineStore("music", () => {
         playListsStore.write(playLists.value)
     }
 
-    function setMusicOnData() {
+    function setAllMusicOnData() {
         const musics = allMusicStore.read();
         if (musics)
             allMusic.value = musics
@@ -120,6 +120,14 @@ export const useMusic = defineStore("music", () => {
         }
     }
 
+    function setMusicOnData(){
+        setAllMusicOnData()
+        setDirectoryOnData()
+        setArtistOnData()
+        setCurrentPlayListOnData()
+        setPlayListOnData()
+    }
+
     function hasPlayList(name: string) {
         return name in playLists.value
     }
@@ -136,10 +144,6 @@ export const useMusic = defineStore("music", () => {
         setPlayList,
         setCurrentList,
         setMusicOnData,
-        setDirectoryOnData,
-        setArtistOnData,
-        setCurrentPlayListOnData,
-        setPlayListOnData,
         hasPlayList,
     }
 });
