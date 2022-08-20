@@ -30,13 +30,13 @@
     </div>
     <br>
     <div class="flex ">
-      <input type="range" min="0" max="100" :value="audio.volume*100" @input="setVolume" :disabled="!hasMusic">
+      <input type="range" min="0" max="100" :value="audio.volume*100" @input="setVolume">
       <input type="range" min="0.5" max="10" :value="audio.playbackRate" @input="setPlaybackRate" step="0.5"
-             :disabled="!hasMusic">
+      >
     </div>
     <br>
     <div class="btn-group ">
-      <button @click="play" class="btn btn-secondary basis-1/2 " :disabled="!hasMusic">play</button>
+      <button @click="play" class="btn btn-secondary basis-1/2 ">play</button>
       <button @click="stop" class="btn btn-primary basis-1/2 " :disabled="!hasMusic">stop</button>
     </div>
     <br>
@@ -57,21 +57,19 @@
     </div>
     <br>
     <div class="btn-group">
-      <button @click="emits('next')" class="btn btn-secondary basis-1/2 " :disabled="!hasMusic || !hasNext">
+      <button @click="emits('next')" class="btn btn-secondary basis-1/2 " :disabled="!hasNext">
         next
       </button>
-      <button @click="emits('prevent')" class="btn btn-primary basis-1/2 " :disabled="!hasMusic || !hasPrevent">
+      <button @click="emits('prevent')" class="btn btn-primary basis-1/2 " :disabled=" !hasPrevent">
         prevent
       </button>
     </div>
     <br>
     <div class="btn-group">
-      <button @click="emits('shuffle')" class="btn btn-secondary basis-1/2 " :class="{'btn-outline':hasShuffle}"
-              :disabled="!hasMusic ">
+      <button @click="emits('shuffle')" class="btn btn-secondary basis-1/2 " :class="{'btn-outline':hasShuffle}">
         shuffle
       </button>
-      <button @click="emits('loop')" class="btn btn-primary basis-1/2 " :class="{'btn-outline':hasLoop}"
-              :disabled="!hasMusic ">
+      <button @click="emits('loop')" class="btn btn-primary basis-1/2 " :class="{'btn-outline':hasLoop}">
         loop
       </button>
     </div>
@@ -79,7 +77,7 @@
     <div class="rating">
       <input value="0" type="radio" v-model="rating" class="hidden">
       <input v-for="i in 5" :key="i" type="radio" :value="i" v-model="rating"
-             class="mask mask-star-2 bg-orange-400" :disabled="!hasMusic"/>
+             class="mask mask-star-2 bg-orange-400"/>
     </div>
   </div>
 </template>
@@ -218,20 +216,22 @@ onUnmounted(() => {
 let getTime: NodeJS.Timer | null = null;
 
 function play() {
-  audio.value.play()
-  getTime = setInterval(() => {
-    if (start.value && audio.value.currentTime < startTime.value)
-      audio.value.currentTime = startTime.value
-    else if (end.value && audio.value.currentTime > endTime.value)
-      audio.value.currentTime = startTime.value
+  if (hasMusic.value) {
+    audio.value.play()
+    getTime = setInterval(() => {
+      if (start.value && audio.value.currentTime < startTime.value)
+        audio.value.currentTime = startTime.value
+      else if (end.value && audio.value.currentTime > endTime.value)
+        audio.value.currentTime = startTime.value
 
-    time.value = audio.value.currentTime
-    if (time.value == duration.value) {
-      if (getTime)
-        clearInterval(getTime)
-      emits('finish')
-    }
-  }, 1000)
+      time.value = audio.value.currentTime
+      if (time.value == duration.value) {
+        if (getTime)
+          clearInterval(getTime)
+        emits('finish')
+      }
+    }, 1000)
+  } else emits('next')
 }
 
 function stop() {
