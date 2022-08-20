@@ -4,7 +4,7 @@ import {Setting} from "../types/types";
 import WorkFile from "../functions/workFile";
 
 export const useSetting = defineStore("setting", () => {
-    const setting: Setting = reactive({pPath: "", numberOfMusicOnList: 0, hasShuffle: false, hasLoop: false})
+    const setting: Setting = reactive({pPath: "", numberOfMusicOnList: -1, hasShuffle: false, hasLoop: false})
     const settingStore = new WorkFile("setting")
 
     function setPPath(path: string) {
