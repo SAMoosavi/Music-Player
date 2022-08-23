@@ -1,5 +1,5 @@
 {
-  "name": "electron-vue-vite",
+    "name": "electron-vue-vite",
   "version": "2.0.0",
   "main": "dist/electron/main/index.js",
   "description": "Really simple Electron + Vue + Vite boilerplate.",
@@ -17,8 +17,8 @@
     "@types/animejs": "^3.1.5",
     "@vitejs/plugin-vue": "^2.3.3",
     "autoprefixer": "^10.4.8",
-    "electron": "^20.0.0",
-    "electron-builder": "^5.5.0",
+    "electron": "^20.0.2",
+    "electron-builder": "^23.3.3",
     "postcss": "^8.4.14",
     "tailwindcss": "^3.1.7",
     "typescript": "^4.7.4",
@@ -40,9 +40,10 @@
   ],
   "dependencies": {
     "@electron/remote": "^2.0.8",
+    "@heroicons/vue": "^1.0.6",
     "animejs": "^3.2.1",
     "daisyui": "^2.20.0",
-    "jsmediatags": "^3.9.7",
+    "node-id3": "^0.2.3",
     "pinia": "^2.0.17"
   }
 }
