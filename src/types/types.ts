@@ -24,3 +24,22 @@ export interface Setting {
     hasShuffle: boolean,
     hasLoop: boolean
 }
+
+export interface Tags {
+    title: string,
+    artist: string,
+    image: {
+        mime: string,
+        type: {
+            id: number,
+            name: string
+        },
+        description: string,
+        imageBuffer: Buffer
+    },
+    raw: {
+        TIT2: string,
+        TPE1: string,
+        APIC: object
+    }
+}
