@@ -86,7 +86,7 @@
 import {copyFileSync, rmSync, existsSync} from "node:fs"
 import {defineProps, onMounted, onUnmounted, ref, watch} from "vue";
 import type {Ref} from "vue";
-import {Music} from "../types/types";
+import {Music, Tags} from "../types/types";
 import {useSetting} from "../store/setting";
 import {storeToRefs} from "pinia";
 
@@ -130,15 +130,13 @@ function createMusic() {
     const pathMusic = props.music.path
     name.value = props.music.name
 
-    const {read} = require("jsmediatags")
-    read(pathMusic, {
-      onSuccess: function (result: any) {
-        getCover(result);
-      },
-      onError: function (error: { type: any; info: any; }) {
-        console.error(':(', error.type, error.info);
-      }
-    });
+    const nodeId3 = require('node-id3')
+    nodeId3.read(pathMusic, (err: any, tags: Tags) => {
+      if (err)
+        throw err
+      getCover(tags)
+    })
+
     const type = props.music.type.toLowerCase()
     const i = Math.random().toString().split('.').pop()
     let newPath = `./src/Music/${i}.${type}`
@@ -158,7 +156,8 @@ function createMusic() {
           duration.value = audio.value.duration
       }, 500)
     else duration.value = audio.value.duration
-  } else emits('notFound')
+  } else
+    emits('notFound')
 }
 
 function goToLikeTime(likeTime: number) {
@@ -256,14 +255,14 @@ function secondToTime(timeNum: number) {
   return (timeNum > 0 ? timeNum + ":" : "") + setTwoNum(minot) + ":" + setTwoNum(second)
 }
 
-function getCover(music: { tags: { picture: { data: any; }; }; }) {
-  const {data} = music.tags.picture
+function getCover(music: Tags) {
+  const image = music.image
+  const data = image.imageBuffer
   let base64String = "";
   for (let i = 0; i < data.length; i++) {
     base64String += String.fromCharCode(data[i]);
   }
-  cover.value = `data:${data.format};base64,${window.btoa(base64String)}`;
-
+  cover.value = `data:${image.type};base64,${window.btoa(base64String)}`;
 }
 
 </script>

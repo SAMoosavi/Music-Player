@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {AllMusic, Artists, Music, PlayLists} from "../types/types";
+import type {AllMusic, Artists, Music, PlayLists, Tags} from "../types/types";
 import {ref} from "vue";
 import type {Ref} from "vue";
 import WorkFile from "../functions/workFile";
@@ -41,7 +41,7 @@ export const useMusic = defineStore("music", () => {
     }
 
     async function setMusic(pathMusics: string[]) {
-        const {read} = require("jsmediatags")
+        const NodeID3 = require('node-id3')
 
         for (const pathMusic of pathMusics) {
             allMusic.value[pathMusic] = <Music>{
@@ -52,21 +52,21 @@ export const useMusic = defineStore("music", () => {
                 status: 0,
             }
             playLists.value['all'].push(pathMusic)
-            await read(pathMusic, {
-                onSuccess: async (result: any) => {
-                    if (artists.value[result.tags.artist])
-                        artists.value[result.tags.artist].push(pathMusic)
-                    else artists.value[result.tags.artist] = <string[]>[pathMusic]
-                    allMusic.value[pathMusic].name = result.tags.title ? allMusic.value[pathMusic].name + '(' + result.tags.title + ')' : allMusic.value[pathMusic].name
-                    artistsStore.write(artists.value)
-                    allMusicStore.write(allMusic.value)
-                },
-                onError: ((error: any) => {
-                    console.error(error)
-                }),
+            NodeID3.read(pathMusic, (err: any, tags: Tags) => {
+                if (err)
+                    throw err
+
+                if (artists.value[tags.artist])
+                    artists.value[tags.artist].push(pathMusic)
+                else artists.value[tags.artist] = <string[]>[pathMusic]
+                allMusic.value[pathMusic].name = tags.title ? allMusic.value[pathMusic].name + '(' + tags.title + ')' : allMusic.value[pathMusic].name
+                artistsStore.write(artists.value)
+                allMusicStore.write(allMusic.value)
+
+
+                playListsStore.write(playLists.value)
             })
         }
-        playListsStore.write(playLists.value)
     }
 
     function setDirectory(pathDirectories: string[]) {
@@ -120,7 +120,7 @@ export const useMusic = defineStore("music", () => {
         }
     }
 
-    function setMusicOnData(){
+    function setMusicOnData() {
         setAllMusicOnData()
         setDirectoryOnData()
         setArtistOnData()
