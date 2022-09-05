@@ -1,5 +1,5 @@
 {
-    "name": "electron-vue-vite",
+  "name": "electron-vue-vite",
   "version": "2.0.0",
   "main": "dist/electron/main/index.js",
   "description": "Really simple Electron + Vue + Vite boilerplate.",
@@ -40,10 +40,17 @@
   ],
   "dependencies": {
     "@electron/remote": "^2.0.8",
-    "@heroicons/vue": "^1.0.6",
     "animejs": "^3.2.1",
     "daisyui": "^2.20.0",
     "node-id3": "^0.2.3",
     "pinia": "^2.0.17"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SAMoosavi/Music-Player.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SAMoosavi/Music-Player/issues"
+  },
+  "homepage": "https://github.com/SAMoosavi/Music-Player#readme"
 }
